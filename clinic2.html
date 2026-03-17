@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarkG Automations - AI Receptionist & Clinic Management</title>
+    
+    <!-- Chat CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0f14;
+            color: #e7eef6;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #121823;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #4ecdc4;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #45b7d1;
+        }
+        
+        /* Navigation */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background: rgba(11, 15, 20, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #25313f;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+        }
+        
+        .logo h2 {
+            font-size: 1.5em;
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: #8a9db0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        
+        .nav-links a:hover {
+            color: #4ecdc4;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        
+        .btn-primary {
+            background: #4ecdc4;
+            color: #0b0f14;
+        }
+        
+        .btn-primary:hover {
+            background: #45b7d1;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.3);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #4ecdc4;
+            color: #4ecdc4;
+        }
+        
+        .btn-outline:hover {
+            background: #4ecdc4;
+            color: #0b0f14;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 150px 5% 80px;
+            background: linear-gradient(135deg, #0b0f14 0%, #121823 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center/cover;
+            opacity: 0.1;
+        }
+        
+        .hero-content {
+            max-width: 600px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            background: rgba(78, 205, 196, 0.15);
+            color: #4ecdc4;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+        }
+        
+        .hero h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+        
+        .hero h1 span {
+            color: #4ecdc4;
+        }
+        
+        .hero p {
+            font-size: 1.2em;
+            color: #8a9db0;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #4ecdc4;
+        }
+        
+        .stat-label {
+            color: #8a9db0;
+            font-size: 0.9em;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 5%;
+            background: #121823;
+        }
+        
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 60px;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .section-header h2 span {
+            color: #4ecdc4;
+        }
+        
+        .section-header p {
+            color: #8a9db0;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: #0b0f14;
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid #25313f;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: #4ecdc4;
+            box-shadow: 0 20px 40px rgba(78, 205, 196, 0.1);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card p {
+            color: #8a9db0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .feature-tag {
+            display: inline-block;
+            background: rgba(78, 205, 196, 0.1);
+            color: #4ecdc4;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        /* Workflow Architecture */
+        .architecture {
+            padding: 80px 5%;
+            background: #0b0f14;
+        }
+        
+        .workflow-diagram {
+            max-width: 1000px;
+            margin: 50px auto;
+            position: relative;
+        }
+        
+        .workflow-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .workflow-node {
+            background: #121823;
+            border: 2px solid #25313f;
+            border-radius: 12px;
+            padding: 20px;
+            width: 180px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .workflow-node i {
+            font-size: 2em;
+            color: #4ecdc4;
+            margin-bottom: 10px;
+        }
+        
+        .workflow-node h4 {
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+        
+        .workflow-node p {
+            font-size: 0.8em;
+            color: #8a9db0;
+        }
+        
+        .workflow-arrow {
+            color: #4ecdc4;
+            font-size: 1.5em;
+        }
+        
+        /* Automation Showcase */
+        .automation-showcase {
+            padding: 80px 5%;
+            background: #121823;
+        }
+        
+        .automation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+        
+        .automation-card {
+            background: #0b0f14;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #25313f;
+            transition: all 0.3s ease;
+        }
+        
+        .automation-card:hover {
+            border-color: #4ecdc4;
+        }
+        
+        .automation-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .automation-header i {
+            font-size: 1.5em;
+            color: #4ecdc4;
+        }
+        
+        .automation-header h3 {
+            font-size: 1.1em;
+        }
+        
+        .automation-desc {
+            color: #8a9db0;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        
+        /* Pricing Section */
+        .pricing {
+            padding: 80px 5%;
+            background: #0b0f14;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 50px auto;
+        }
+        
+        .pricing-card {
+            background: #121823;
+            border-radius: 20px;
+            padding: 40px 30px;
+            border: 1px solid #25313f;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: #4ecdc4;
+        }
+        
+        .pricing-card.popular {
+            border: 2px solid #4ecdc4;
+            transform: scale(1.05);
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4ecdc4;
+            color: #0b0f14;
+            padding: 4px 20px;
+            border-radius: 50px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .pricing-header h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        
+        .price {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #4ecdc4;
+        }
+        
+        .price span {
+            font-size: 0.4em;
+            color: #8a9db0;
+            font-weight: 400;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .pricing-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid #25313f;
+            color: #8a9db0;
+        }
+        
+        .pricing-features li i {
+            color: #4ecdc4;
+            margin-right: 10px;
+            width: 20px;
+        }
+        
+        .pricing-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 80px 5%;
+            background: #121823;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 50px auto;
+        }
+        
+        .testimonial-card {
+            background: #0b0f14;
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid #25313f;
+        }
+        
+        .testimonial-content {
+            color: #8a9db0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .author-info h4 {
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+        
+        .author-info p {
+            color: #8a9db0;
+            font-size: 0.9em;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 5%;
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            text-align: center;
+        }
+        
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .cta-content h2 {
+            font-size: 2.5em;
+            color: #0b0f14;
+            margin-bottom: 20px;
+        }
+        
+        .cta-content p {
+            color: #0b0f14;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        .btn-cta {
+            padding: 15px 40px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+        }
+        
+        .btn-cta-primary {
+            background: #0b0f14;
+            color: white;
+        }
+        
+        .btn-cta-primary:hover {
+            background: #1b2736;
+            transform: translateY(-2px);
+        }
+        
+        .btn-cta-secondary {
+            background: transparent;
+            border: 2px solid #0b0f14;
+            color: #0b0f14;
+        }
+        
+        .btn-cta-secondary:hover {
+            background: #0b0f14;
+            color: white;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #0b0f14;
+            padding: 60px 5% 20px;
+            border-top: 1px solid #25313f;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-section h3 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        
+        .footer-section p, .footer-section a {
+            color: #8a9db0;
+            text-decoration: none;
+            line-height: 2;
+            display: block;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-section a:hover {
+            color: #4ecdc4;
+            transform: translateX(5px);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: #1b2736;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: #4ecdc4;
+            transform: translateY(-5px);
+        }
+        
+        .social-links i {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #25313f;
+            color: #8a9db0;
+        }
+        
+        /* Chat Container */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+            }
+            
+            .pricing-card.popular {
+                transform: scale(1);
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #121823;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid #25313f;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            color: #4ecdc4;
+        }
+        
+        .close-modal {
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #8a9db0;
+        }
+        
+        .close-modal:hover {
+            color: #4ecdc4;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #8a9db0;
+            font-weight: 500;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #1b2736;
+            border: 1px solid #25313f;
+            border-radius: 8px;
+            color: #e7eef6;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #4ecdc4;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-robot"></i>
+            </div>
+            <h2>MarkG Automations</h2>
+        </div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#workflow">How It Works</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#testimonials">Success Stories</a>
+            <button class="btn btn-primary" onclick="window.openChat()">Try Demo</button>
+            <button class="btn btn-outline" onclick="openConsultModal()">Book Consultation</button>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content" data-aos="fade-right">
+            <span class="hero-badge">⚡ AI-Powered Automation</span>
+            <h1>Complete <span>AI Receptionist</span> & Clinic Management System</h1>
+            <p>Transform your clinic with a 24/7 AI assistant that handles appointments, patient inquiries, prescriptions, and automates your entire workflow—all without hiring additional staff.</p>
+            <div class="hero-cta">
+                <button class="btn btn-primary" onclick="window.openChat()">💬 Try Live Demo</button>
+                <button class="btn btn-outline" onclick="openConsultModal()">📞 Schedule Demo Call</button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">1,200+</div>
+                    <div class="stat-label">Appointments Booked</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Patient Satisfaction</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Availability</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-header" data-aos="fade-up">
+            <h2>Everything Your <span>Clinic Needs</span> in One System</h2>
+            <p>A complete automation suite that handles patient communication, scheduling, and administrative tasks automatically.</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>24/7 AI Receptionist</h3>
+                <p>Never miss a call or message. Our AI answers patient inquiries, books appointments, and handles emergencies 24/7.</p>
+                <span class="feature-tag">Always On</span>
+            </div>
+            
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>Smart Appointment Booking</h3>
+                <p>Real-time calendar integration prevents double-booking. Patients book instantly via chat, web, or phone.</p>
+                <span class="feature-tag">Google Calendar</span>
+            </div>
+            
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3>Automated Confirmations</h3>
+                <p>Professional email confirmations with calendar links sent automatically after every booking.</p>
+                <span class="feature-tag">Gmail Integration</span>
+            </div>
+            
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Smart Reminders</h3>
+                <p>Automated email and SMS reminders 24 hours before appointments. Reduce no-shows by 30%.</p>
+                <span class="feature-tag">24h Reminders</span>
+            </div>
+            
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-icon">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <h3>Multi-Doctor Support</h3>
+                <p>Manage schedules for multiple doctors with individual calendars and availability rules.</p>
+                <span class="feature-tag">4+ Doctors</span>
+            </div>
+            
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+                <div class="feature-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h3>Voice Receptionist</h3>
+                <p>AI-powered voice assistant answers phone calls, books appointments, and handles inquiries 24/7.</p>
+                <span class="feature-tag">Voice Integration</span>
+            </div>
+            
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="700">
+                <div class="feature-icon">
+                    <i class="fas fa-prescription-bottle"></i>
+                </div>
+                <h3>Medication Database</h3>
+                <p>Patients can check medicine availability, pricing, and request refills through chat.</p>
+                <span class="feature-tag">Pharmacy Integration</span>
+            </div>
+            
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="800">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Analytics Dashboard</h3>
+                <p>Track appointments, popular doctors, no-show rates, and revenue all in one place.</p>
+                <span class="feature-tag">Real-time Data</span>
+            </div>
+            
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="900">
+                <div class="feature-icon">
+                    <i class="fas fa-file-medical"></i>
+                </div>
+                <h3>Patient Records</h3>
+                <p>Automatic logging of all patient interactions and appointment history.</p>
+                <span class="feature-tag">Data Logging</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Workflow Architecture -->
+    <section id="workflow" class="architecture">
+        <div class="section-header" data-aos="fade-up">
+            <h2>How the <span>Automation Works</span></h2>
+            <p>Built with enterprise-grade integrations. Fully customizable for your clinic's needs.</p>
+        </div>
+        
+        <div class="workflow-diagram" data-aos="fade-up">
+            <div class="workflow-row">
+                <div class="workflow-node">
+                    <i class="fas fa-comment-dots"></i>
+                    <h4>Chat/Web</h4>
+                    <p>Website, WhatsApp</p>
+                </div>
+                <i class="fas fa-arrow-right workflow-arrow"></i>
+                <div class="workflow-node">
+                    <i class="fas fa-robot"></i>
+                    <h4>AI Receptionist</h4>
+                    <p>Natural Language Processing</p>
+                </div>
+                <i class="fas fa-arrow-right workflow-arrow"></i>
+                <div class="workflow-node">
+                    <i class="fas fa-brain"></i>
+                    <h4>Intent Detection</h4>
+                    <p>Booking, Info, Emergency</p>
+                </div>
+            </div>
+            
+            <div class="workflow-row">
+                <div class="workflow-node">
+                    <i class="fas fa-calendar-check"></i>
+                    <h4>Check Availability</h4>
+                    <p>Real-time Calendar</p>
+                </div>
+                <i class="fas fa-arrow-right workflow-arrow"></i>
+                <div class="workflow-node">
+                    <i class="fas fa-calendar-plus"></i>
+                    <h4>Create Event</h4>
+                    <p>Google Calendar</p>
+                </div>
+                <i class="fas fa-arrow-right workflow-arrow"></i>
+                <div class="workflow-node">
+                    <i class="fas fa-envelope"></i>
+                    <h4>Send Confirmation</h4>
+                    <p>Email Notification</p>
+                </div>
+            </div>
+            
+            <div class="workflow-row">
+                <div class="workflow-node">
+                    <i class="fas fa-clock"></i>
+                    <h4>24h Wait</h4>
+                    <p>Scheduled Reminder</p>
+                </div>
+                <i class="fas fa-arrow-right workflow-arrow"></i>
+                <div class="workflow-node">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h4>Check Tomorrow</h4>
+                    <p>Calendar Lookup</p>
+                </div>
+                <i class="fas fa-arrow-right workflow-arrow"></i>
+                <div class="workflow-node">
+                    <i class="fas fa-envelope-open-text"></i>
+                    <h4>Send Reminder</h4>
+                    <p>Email & SMS</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Automation Showcase -->
+    <section class="automation-showcase">
+        <div class="section-header" data-aos="fade-up">
+            <h2>Complete <span>Automation</span> Suite</h2>
+            <p>Every automation you need to run a modern clinic.</p>
+        </div>
+        
+        <div class="automation-grid">
+            <div class="automation-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="automation-header">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI Receptionist</h3>
+                </div>
+                <div class="automation-desc">Handles 100% of patient inquiries, bookings, and FAQs 24/7</div>
+            </div>
+            
+            <div class="automation-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="automation-header">
+                    <i class="fas fa-calendar-plus"></i>
+                    <h3>Booking Automation</h3>
+                </div>
+                <div class="automation-desc">Real-time calendar sync, availability checks, instant booking</div>
+            </div>
+            
+            <div class="automation-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="automation-header">
+                    <i class="fas fa-envelope"></i>
+                    <h3>Email Confirmations</h3>
+                </div>
+                <div class="automation-desc">Professional HTML emails with calendar links</div>
+            </div>
+            
+            <div class="automation-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="automation-header">
+                    <i class="fas fa-clock"></i>
+                    <h3>Reminder System</h3>
+                </div>
+                <div class="automation-desc">24-hour automated reminders (email & SMS ready)</div>
+            </div>
+            
+            <div class="automation-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="automation-header">
+                    <i class="fas fa-phone-alt"></i>
+                    <h3>Voice Receptionist</h3>
+                </div>
+                <div class="automation-desc">AI-powered phone call handling with the same brain</div>
+            </div>
+            
+            <div class="automation-card" data-aos="fade-up" data-aos-delay="600">
+                <div class="automation-header">
+                    <i class="fas fa-pills"></i>
+                    <h3>Medication Info</h3>
+                </div>
+                <div class="automation-desc">Instant answers on medication availability and pricing</div>
+            </div>
+            
+            <div class="automation-card" data-aos="fade-up" data-aos-delay="700">
+                <div class="automation-header">
+                    <i class="fas fa-file-excel"></i>
+                    <h3>Patient Database</h3>
+                </div>
+                <div class="automation-desc">Automatic logging of all appointments and interactions</div>
+            </div>
+            
+            <div class="automation-card" data-aos="fade-up" data-aos-delay="800">
+                <div class="automation-header">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Analytics Ready</h3>
+                </div>
+                <div class="automation-desc">Track no-shows, popular doctors, and clinic trends</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="section-header" data-aos="fade-up">
+            <h2>Simple, <span>Transparent</span> Pricing</h2>
+            <p>Choose the plan that fits your clinic. No hidden fees or long-term contracts.</p>
+        </div>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="pricing-header">
+                    <h3>Starter</h3>
+                    <div class="price">KES 5,000<span>/month</span></div>
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> AI Chat Receptionist</li>
+                    <li><i class="fas fa-check"></i> Appointment Booking</li>
+                    <li><i class="fas fa-check"></i> Email Confirmations</li>
+                    <li><i class="fas fa-check"></i> Patient Database</li>
+                    <li><i class="fas fa-check"></i> 1 Doctor Schedule</li>
+                    <li><i class="fas fa-check"></i> Basic FAQ Responses</li>
+                </ul>
+                <button class="pricing-btn btn-primary" onclick="openConsultModal()">Get Started</button>
+            </div>
+            
+            <div class="pricing-card popular" data-aos="fade-up" data-aos-delay="200">
+                <span class="popular-badge">Most Popular</span>
+                <div class="pricing-header">
+                    <h3>Professional</h3>
+                    <div class="price">KES 15,000<span>/month</span></div>
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Everything in Starter</li>
+                    <li><i class="fas fa-check"></i> Up to 4 Doctors</li>
+                    <li><i class="fas fa-check"></i> SMS Reminders (500/month)</li>
+                    <li><i class="fas fa-check"></i> Medication Database</li>
+                    <li><i class="fas fa-check"></i> Voice Receptionist</li>
+                    <li><i class="fas fa-check"></i> Analytics Dashboard</li>
+                </ul>
+                <button class="pricing-btn btn-primary" onclick="openConsultModal()">Get Started</button>
+            </div>
+            
+            <div class="pricing-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="pricing-header">
+                    <h3>Enterprise</h3>
+                    <div class="price">KES 30,000<span>/month</span></div>
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Everything in Professional</li>
+                    <li><i class="fas fa-check"></i> Unlimited Doctors</li>
+                    <li><i class="fas fa-check"></i> Unlimited SMS/WhatsApp</li>
+                    <li><i class="fas fa-check"></i> Custom Integrations</li>
+                    <li><i class="fas fa-check"></i> Priority Support</li>
+                    <li><i class="fas fa-check"></i> White-Label Option</li>
+                </ul>
+                <button class="pricing-btn btn-primary" onclick="openConsultModal()">Contact Sales</button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials -->
+    <section id="testimonials" class="testimonials">
+        <div class="section-header" data-aos="fade-up">
+            <h2>Trusted by <span>Clinics</span> Across Kenya</h2>
+            <p>Real results from clinics using our automation platform.</p>
+        </div>
+        
+        <div class="testimonials-grid">
+            <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="testimonial-content">
+                    "The AI receptionist books 80% of our appointments automatically. No more missed calls or double-booking headaches."
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">DN</div>
+                    <div class="author-info">
+                        <h4>Dr. Nelson Munyua</h4>
+                        <p>Pediatrician, Limuru</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="testimonial-content">
+                    "Reminders cut our no-show rate from 25% to under 10% in the first month. Worth every shilling."
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">SG</div>
+                    <div class="author-info">
+                        <h4>Dr. Sarah Oyango</h4>
+                        <p>Gynecologist, Kiambu</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="testimonial-content">
+                    "Patients love being able to check medication prices and book appointments 24/7. Game changer for our clinic."
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">GG</div>
+                    <div class="author-info">
+                        <h4>Dr. Githeci Gathigi</h4>
+                        <p>General Practitioner</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content" data-aos="fade-up">
+            <h2>Ready to Transform Your Clinic?</h2>
+            <p>Join 50+ clinics already using our automation to save time, reduce costs, and provide better patient care.</p>
+            <div class="cta-buttons">
+                <button class="btn-cta btn-cta-primary" onclick="window.openChat()">💬 Try Live Demo</button>
+                <button class="btn-cta btn-cta-secondary" onclick="openConsultModal()">📞 Schedule Consultation</button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>MarkG Automations</h3>
+                <p>Powering Kenyan clinics with enterprise-grade automation at local prices.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Product</h3>
+                <a href="#features">Features</a>
+                <a href="#workflow">How It Works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#">Demo</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Documentation</a>
+                <a href="#">FAQs</a>
+                <a href="#">Contact</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-phone"></i> +254 798 879 868</p>
+                <p><i class="fas fa-envelope"></i> info@markgautomations.co.ke</p>
+                <p><i class="fas fa-map-marker-alt"></i> Ngecha, Limuru</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 MarkG Automations. All rights reserved. | Created by Mark Gathigi Githeci</p>
+        </div>
+    </footer>
+    
+    <!-- Consultation Modal -->
+    <div class="modal" id="consultModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Schedule a Free Consultation</h2>
+                <i class="fas fa-times close-modal" onclick="closeConsultModal()"></i>
+            </div>
+            
+            <form id="consultForm" onsubmit="submitConsult(event)">
+                <div class="form-group">
+                    <label class="form-label">Clinic Name</label>
+                    <input type="text" class="form-input" id="clinicName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Your Name</label>
+                    <input type="text" class="form-input" id="contactName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-input" id="phoneNumber" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Number of Doctors</label>
+                    <select class="form-select" id="doctorCount">
+                        <option value="1">1 Doctor</option>
+                        <option value="2-3">2-3 Doctors</option>
+                        <option value="4-6">4-6 Doctors</option>
+                        <option value="7+">7+ Doctors</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="closeConsultModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Request Consultation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Chat Container -->
+    <div class="chat-container"></div>
+
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Initialize Chat -->
+    <script type="module">
+        import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+        
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        const chat = createChat({
+            webhookUrl: 'https://ybg-n8n-automations.onrender.com/webhook/8f427031-1110-4ea3-aef7-5d06ba7d5bce/chat',
+            mode: 'floating',
+            i18n: {
+                en: {
+                    title: '🏥 MarkG Automations',
+                    subtitle: 'Hi! Want to automate your clinic?',
+                    getStarted: 'Start Chat',
+                    sendButton: 'Send',
+                    placeholder: 'Type your message...'
+                }
+            },
+            initialMessages: [
+                '👋 Welcome to MarkG Automations!',
+                'I can help you with:\n• 💬 Demo our AI receptionist\n• 📅 Book a consultation\n• 💰 Get pricing info\n• 🔧 Technical questions'
+            ],
+            theme: {
+                primaryColor: '#4ecdc4',
+                secondaryColor: '#45b7d1',
+                backgroundColor: '#121823',
+                surfaceColor: '#1b2736',
+                borderColor: '#25313f',
+                textColor: '#e7eef6',
+                botMessageBackground: '#1b2736',
+                botMessageTextColor: '#e7eef6',
+                userMessageBackground: '#4ecdc4',
+                userMessageTextColor: '#0b0f14',
+                inputBackground: '#0e1623',
+                inputTextColor: '#e7eef6',
+                buttonBackground: '#4ecdc4',
+                buttonTextColor: '#0b0f14',
+                fontFamily: 'Inter, sans-serif'
+            },
+            metadata: {
+                clinicName: 'MarkG Automations',
+                website: 'sales-page',
+                source: 'marketing-chat'
+            }
+        });
+
+        window.openChat = () => {
+            chat.open();
+        };
+    </script>
+    
+    <script>
+        // Modal functions
+        function openConsultModal() {
+            document.getElementById('consultModal').classList.add('active');
+        }
+        
+        function closeConsultModal() {
+            document.getElementById('consultModal').classList.remove('active');
+        }
+        
+        function submitConsult(event) {
+            event.preventDefault();
+            
+            const formData = {
+                clinicName: document.getElementById('clinicName').value,
+                contactName: document.getElementById('contactName').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                email: document.getElementById('email').value,
+                doctorCount: document.getElementById('doctorCount').value,
+                source: 'website-consult-form'
+            };
+            
+            // Send to webhook
+            fetch('https://ybg-n8n-automations.onrender.com/webhook/consultation-request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            
+            alert('Thank you! We\'ll contact you within 24 hours to schedule your consultation.');
+            closeConsultModal();
+        }
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
