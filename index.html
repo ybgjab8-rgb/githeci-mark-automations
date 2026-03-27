@@ -1081,7 +1081,7 @@
                 <input type="tel" class="form-input" id="loginPhone" placeholder="0712345678">
             </div>
             
-            <button class="btn btn-primary" style="width: 100%;" onclick="patientLogin(event)">Login to Portal</button>
+            <button class="btn btn-primary" style="width: 100%;" onclick="patientLogin()">Login to Portal</button>
             
             <p style="color: #8a9db0; text-align: center; margin-top: 20px; font-size: 0.9em;">
                 Use the email and phone you used when booking
@@ -1409,7 +1409,7 @@
 let currentPatient = null;
 
 
-async function patientLogin(event) {
+async function patientLogin() {
     const email = document.getElementById('loginEmail').value;
     const phone = document.getElementById('loginPhone').value;
     
@@ -1418,43 +1418,20 @@ async function patientLogin(event) {
         return;
     }
     
-    const loginBtn = event?.currentTarget || event?.target?.closest('button') || document.querySelector('#loginForm button');
-    const originalText = loginBtn?.textContent || 'Login to Portal';
-    if (loginBtn) {
-        loginBtn.textContent = 'Logging in...';
-        loginBtn.disabled = true;
-    }
+    const loginBtn = event.target;
+    const originalText = loginBtn.textContent;
+    loginBtn.textContent = 'Logging in...';
+    loginBtn.disabled = true;
     
     try {
         // 🔴 IMPORTANT: Replace this URL with your actual n8n webhook URL after creating the workflow
-        const webhookUrl = 'https://ybg-n8n-automations.onrender.com/webhook/login';
-        console.log('Patient login webhook request:', webhookUrl, { email, phone });
-        const response = await fetch(webhookUrl, {
+        const response = await fetch('https://ybg-n8n-automations.onrender.com/webhook/simple-login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, phone })
         });
         
-        const responseText = await response.text();
-        let data;
-        try {
-            data = responseText ? JSON.parse(responseText) : null;
-        } catch (parseError) {
-            console.error('Unable to parse webhook response as JSON:', responseText, parseError);
-            data = null;
-        }
-        
-        if (!response.ok) {
-            console.error('Webhook request failed:', response.status, response.statusText, responseText);
-            alert('Login failed: webhook returned ' + response.status + '. Please check your n8n workflow.');
-            return;
-        }
-        
-        if (!data) {
-            console.error('Invalid webhook response:', responseText);
-            alert('Login failed: invalid response from webhook. Check the webhook output.');
-            return;
-        }
+        const data = await response.json();
         
         if (data.success) {
             currentPatient = {
@@ -1478,10 +1455,8 @@ async function patientLogin(event) {
         console.error('Login error:', error);
         alert('Unable to connect. Please try again later.');
     } finally {
-        if (loginBtn) {
-            loginBtn.textContent = originalText;
-            loginBtn.disabled = false;
-        }
+        loginBtn.textContent = originalText;
+        loginBtn.disabled = false;
     }
 }
 
@@ -1501,24 +1476,22 @@ function displayAppointments(appointments) {
                 <p>Reason: ${app.reason}</p>
                 <p>Status: ${app.status}</p>
             </div>
-            <button class="cancel-btn" onclick="cancelAppointment(event, '${app.doctorName}', '${app.date}', '${app.time}')">
+            <button class="cancel-btn" onclick="cancelAppointment('${app.doctorName}', '${app.date}', '${app.time}')">
                 Cancel
             </button>
         </div>
     `).join('');
 }
 
-async function cancelAppointment(event, doctorName, date, time) {
+async function cancelAppointment(doctorName, date, time) {
     if (!confirm(`Cancel appointment with ${doctorName} on ${date} at ${time}?`)) {
         return;
     }
     
-    const cancelBtn = event?.currentTarget || event?.target?.closest('button') || document.querySelector('.cancel-btn');
-    const originalText = cancelBtn?.textContent || 'Cancel';
-    if (cancelBtn) {
-        cancelBtn.textContent = 'Cancelling...';
-        cancelBtn.disabled = true;
-    }
+    const cancelBtn = event.target;
+    const originalText = cancelBtn.textContent;
+    cancelBtn.textContent = 'Cancelling...';
+    cancelBtn.disabled = true;
     
     try {
         // 🔴 IMPORTANT: Replace this URL with your actual n8n webhook URL after creating the workflow
@@ -1545,10 +1518,8 @@ async function cancelAppointment(event, doctorName, date, time) {
         console.error('Cancel error:', error);
         alert('Unable to connect. Please try again later.');
     } finally {
-        if (cancelBtn) {
-            cancelBtn.textContent = originalText;
-            cancelBtn.disabled = false;
-        }
+        cancelBtn.textContent = originalText;
+        cancelBtn.disabled = false;
     }
 }
 
