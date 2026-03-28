@@ -1176,37 +1176,33 @@ async function fetchAppointmentsFromSheet(email, phone) {
             return { success: false, message: "No data found" };
         }
         
-        const headers = data.values[0];
-        const rows = data.values.slice(1);
-        
-        // Find column indexes - MATCHING YOUR SHEET HEADERS
-        const nameCol = headers.indexOf('Patient Name');
-        const emailCol = headers.indexOf('Email');
-        const phoneCol = headers.indexOf('Phone Number');
-        const doctorCol = headers.indexOf('Doctor');
-        const dateCol = headers.indexOf('Date');        // ← 'Date' not 'Date & Time'
-        const timeCol = headers.indexOf('Time');
-        const statusCol = headers.indexOf('Status');
+        const rows = data.values.slice(1); // Skip header row
         
         let patientName = "";
         const appointments = [];
         
+        // Use column indexes directly based on your sheet structure
+        // 0: Patient Name, 1: Phone Number, 2: Date, 3: Doctor, 4: Status, 6: Email, 7: Time
         for (const row of rows) {
-            const rowEmail = row[emailCol] || '';
-            const rowPhone = row[phoneCol] || '';
+            const rowEmail = row[6] || '';      // Email is at index 6
+            const rowPhone = row[1] || '';      // Phone is at index 1
             
             if ((rowEmail && rowEmail.toLowerCase() === email.toLowerCase()) || 
                 (rowPhone && rowPhone.toString() === phone.toString())) {
                 
-                patientName = row[nameCol] || email.split('@')[0];
-                const status = row[statusCol] || 'Confirmed';
+                patientName = row[0] || email.split('@')[0];  // Name at index 0
+                const status = row[4] || 'Confirmed';         // Status at index 4
+                
+                console.log('Found:', row);
+                console.log('Date value:', row[2]);  // Date at index 2
+                console.log('Time value:', row[7]);  // Time at index 7
                 
                 if (status !== 'Cancelled' && status !== 'Completed') {
                     appointments.push({
-                        doctorName: row[doctorCol] || 'Dr. Githeci',
-                        date: row[dateCol] || 'Date not set',  // Now reads from 'Date' column
-                        time: row[timeCol] || 'Time not set',
-                        reason: 'Consultation',  // Hardcoded since no Reason column
+                        doctorName: row[3] || 'Dr. Githeci',  // Doctor at index 3
+                        date: row[2] || 'Date not set',       // Date at index 2
+                        time: row[7] || 'Time not set',       // Time at index 7
+                        reason: 'Consultation',
                         status: status
                     });
                 }
