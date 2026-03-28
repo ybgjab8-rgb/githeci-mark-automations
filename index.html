@@ -1153,88 +1153,159 @@
             anchor.addEventListener('click', function (e) { e.preventDefault(); document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' }); });
         });
         
-        // Patient Portal Functions
-        let currentPatient = null;
+      // Patient Portal Functions
+let currentPatient = null;
+
+function showLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
+function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+
+// Google Sheets API Configuration
+const SHEET_ID = '1FcDVXIz7Q5PmNhnSshmt8n4Z3k6P2fX0Puhmmh6y5dk';
+const API_KEY = 'AIzaSyDGMuppJQrS0DUl4XqMrR3e-nrWwdZVF5E'; // <-- REPLACE WITH YOUR ACTUAL API KEY
+
+async function fetchAppointmentsFromSheet(email, phone) {
+    try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`;
+        const response = await fetch(url);
+        const data = await response.json();
         
-        function showLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
-        function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+        if (!data.values || data.values.length === 0) {
+            return { success: false, message: "No data found" };
+        }
         
-        async function patientLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const phone = document.getElementById('loginPhone').value;
-            if (!email || !phone) { alert('Please enter both email and phone'); return; }
+        const headers = data.values[0];
+        const rows = data.values.slice(1);
+        
+        // Find column indexes
+        const nameCol = headers.indexOf('Patient Name');
+        const emailCol = headers.indexOf('Email');
+        const phoneCol = headers.indexOf('Phone Number');
+        const doctorCol = headers.indexOf('Doctor');
+        const dateCol = headers.indexOf('Date & Time');
+        const timeCol = headers.indexOf('Time');
+        const reasonCol = headers.indexOf('Reason');
+        const statusCol = headers.indexOf('Status');
+        
+        let patientName = "";
+        const appointments = [];
+        
+        for (const row of rows) {
+            const rowEmail = row[emailCol] || '';
+            const rowPhone = row[phoneCol] || '';
             
-            const loginBtn = document.getElementById('loginSubmitBtn');
-            const originalText = loginBtn.innerHTML;
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-            loginBtn.disabled = true;
-            
-            try {
-                const response = await fetch('https://ybg-n8n-automations.onrender.com/webhook/patient-login', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, phone })
-                });
-                const data = await response.json();
+            if ((rowEmail && rowEmail.toLowerCase() === email.toLowerCase()) || 
+                (rowPhone && rowPhone === phone)) {
                 
-                if (data.success) {
-                    currentPatient = { name: data.patientName, email: email, phone: phone };
-                    closeLoginModal();
-                    document.getElementById('loginButtonContainer').style.display = 'none';
-                    document.getElementById('patientDashboard').style.display = 'block';
-                    document.getElementById('patientName').textContent = data.patientName;
-                    document.getElementById('upcomingCount').textContent = data.upcomingCount;
-                    document.getElementById('pastCount').textContent = data.pastCount;
-                    displayAppointments(data.upcomingAppointments);
-                } else {
-                    alert(data.message || 'No appointments found. Please check your details.');
+                patientName = row[nameCol] || email.split('@')[0];
+                const status = row[statusCol] || 'Confirmed';
+                
+                if (status !== 'Cancelled' && status !== 'Completed') {
+                    appointments.push({
+                        doctorName: row[doctorCol] || 'Dr. Githeci',
+                        date: row[dateCol] || 'Date not set',
+                        time: row[timeCol] || 'Time not set',
+                        reason: row[reasonCol] || 'Consultation',
+                        status: status
+                    });
                 }
-            } catch (error) {
-                console.error('Login error:', error);
-                alert('Unable to connect. Please try again later.');
-            } finally {
-                loginBtn.innerHTML = originalText;
-                loginBtn.disabled = false;
             }
         }
         
-        function displayAppointments(appointments) {
-            const container = document.getElementById('upcomingAppointments');
-            if (!appointments || appointments.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #8a9db0;">No upcoming appointments</div>';
-                return;
-            }
-            container.innerHTML = appointments.map(app => `
-                <div class="appointment-item">
-                    <div class="appointment-info">
-                        <h4>${app.doctorName}</h4>
-                        <p><i class="fas fa-calendar"></i> ${app.date} at ${app.time}</p>
-                        <p><i class="fas fa-stethoscope"></i> Reason: ${app.reason}</p>
-                        <p><i class="fas fa-check-circle"></i> Status: ${app.status}</p>
-                    </div>
-                    <button class="cancel-btn" onclick="cancelAppointment('${app.doctorName}', '${app.date}', '${app.time}')">Cancel</button>
-                </div>
-            `).join('');
-        }
+        return {
+            success: appointments.length > 0,
+            patientName: patientName,
+            upcomingCount: appointments.length,
+            pastCount: 0,
+            upcomingAppointments: appointments,
+            message: appointments.length > 0 ? `Welcome back, ${patientName}!` : "No appointments found"
+        };
         
-        async function cancelAppointment(doctorName, date, time) {
-            if (!confirm(`Cancel appointment with ${doctorName} on ${date}?`)) return;
-            try {
-                const response = await fetch('https://ybg-n8n-automations.onrender.com/webhook/cancel-appointment', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ patientName: currentPatient.name, email: currentPatient.email, doctorName: doctorName, appointmentDate: date, appointmentTime: time })
-                });
-                if (response.ok) { alert('Appointment cancelled successfully.'); patientLogin(); }
-                else { alert('Failed to cancel. Please try again.'); }
-            } catch (error) { console.error('Cancel error:', error); alert('Failed to cancel. Please try again.'); }
-        }
+    } catch (error) {
+        console.error('Error fetching sheet:', error);
+        return { success: false, message: "Error loading appointments" };
+    }
+}
+
+async function patientLogin() {
+    const email = document.getElementById('loginEmail').value;
+    const phone = document.getElementById('loginPhone').value;
+    
+    if (!email || !phone) {
+        alert('Please enter both email and phone');
+        return;
+    }
+    
+    const loginBtn = document.getElementById('loginSubmitBtn');
+    const originalText = loginBtn.innerHTML;
+    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+    loginBtn.disabled = true;
+    
+    try {
+        const data = await fetchAppointmentsFromSheet(email, phone);
         
-        function logoutPatient() {
-            currentPatient = null;
-            document.getElementById('patientDashboard').style.display = 'none';
-            document.getElementById('loginButtonContainer').style.display = 'block';
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPhone').value = '';
+        if (data.success) {
+            currentPatient = {
+                name: data.patientName,
+                email: email,
+                phone: phone
+            };
+            
+            closeLoginModal();
+            document.getElementById('loginButtonContainer').style.display = 'none';
+            document.getElementById('patientDashboard').style.display = 'block';
+            document.getElementById('patientName').textContent = data.patientName;
+            document.getElementById('upcomingCount').textContent = data.upcomingCount;
+            document.getElementById('pastCount').textContent = data.pastCount;
+            displayAppointments(data.upcomingAppointments);
+        } else {
+            alert(data.message || 'No appointments found. Please check your details.');
         }
-    </script>
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Unable to connect. Please try again later.');
+    } finally {
+        loginBtn.innerHTML = originalText;
+        loginBtn.disabled = false;
+    }
+}
+
+function displayAppointments(appointments) {
+    const container = document.getElementById('upcomingAppointments');
+    if (!appointments || appointments.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 40px; color: #8a9db0;">No upcoming appointments</div>';
+        return;
+    }
+    container.innerHTML = appointments.map(app => `
+        <div class="appointment-item">
+            <div class="appointment-info">
+                <h4>${app.doctorName}</h4>
+                <p><i class="fas fa-calendar"></i> ${app.date} at ${app.time}</p>
+                <p><i class="fas fa-stethoscope"></i> Reason: ${app.reason}</p>
+                <p><i class="fas fa-check-circle"></i> Status: ${app.status}</p>
+            </div>
+            <button class="cancel-btn" onclick="cancelAppointment('${app.doctorName}', '${app.date}', '${app.time}')">Cancel</button>
+        </div>
+    `).join('');
+}
+
+async function cancelAppointment(doctorName, date, time) {
+    if (!confirm(`Cancel appointment with ${doctorName} on ${date}?`)) return;
+    try {
+        const response = await fetch('https://ybg-n8n-automations.onrender.com/webhook/cancel-appointment', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ patientName: currentPatient.name, email: currentPatient.email, doctorName: doctorName, appointmentDate: date, appointmentTime: time })
+        });
+        if (response.ok) { alert('Appointment cancelled successfully.'); patientLogin(); }
+        else { alert('Failed to cancel. Please try again.'); }
+    } catch (error) { console.error('Cancel error:', error); alert('Failed to cancel. Please try again.'); }
+}
+
+function logoutPatient() {
+    currentPatient = null;
+    document.getElementById('patientDashboard').style.display = 'none';
+    document.getElementById('loginButtonContainer').style.display = 'block';
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPhone').value = '';
+}  </script>
 </body>
 </html>
