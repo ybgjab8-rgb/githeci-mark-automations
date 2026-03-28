@@ -1179,14 +1179,13 @@ async function fetchAppointmentsFromSheet(email, phone) {
         const headers = data.values[0];
         const rows = data.values.slice(1);
         
-        // Find column indexes
+        // Find column indexes - MATCHING YOUR SHEET HEADERS
         const nameCol = headers.indexOf('Patient Name');
         const emailCol = headers.indexOf('Email');
         const phoneCol = headers.indexOf('Phone Number');
         const doctorCol = headers.indexOf('Doctor');
-        const dateCol = headers.indexOf('Date');
+        const dateCol = headers.indexOf('Date');        // ← 'Date' not 'Date & Time'
         const timeCol = headers.indexOf('Time');
-        const reasonCol = headers.indexOf('Reason');
         const statusCol = headers.indexOf('Status');
         
         let patientName = "";
@@ -1197,7 +1196,7 @@ async function fetchAppointmentsFromSheet(email, phone) {
             const rowPhone = row[phoneCol] || '';
             
             if ((rowEmail && rowEmail.toLowerCase() === email.toLowerCase()) || 
-                (rowPhone && rowPhone === phone)) {
+                (rowPhone && rowPhone.toString() === phone.toString())) {
                 
                 patientName = row[nameCol] || email.split('@')[0];
                 const status = row[statusCol] || 'Confirmed';
@@ -1205,9 +1204,9 @@ async function fetchAppointmentsFromSheet(email, phone) {
                 if (status !== 'Cancelled' && status !== 'Completed') {
                     appointments.push({
                         doctorName: row[doctorCol] || 'Dr. Githeci',
-                        date: row[dateCol] || 'Date not set',
+                        date: row[dateCol] || 'Date not set',  // Now reads from 'Date' column
                         time: row[timeCol] || 'Time not set',
-                        reason: row[reasonCol] || 'Consultation',
+                        reason: 'Consultation',  // Hardcoded since no Reason column
                         status: status
                     });
                 }
