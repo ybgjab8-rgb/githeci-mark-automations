@@ -1181,7 +1181,7 @@ async function fetchAppointmentsFromSheet(email, phone) {
         let patientName = "";
         const appointments = [];
         
-        // Column indexes based on your sheet structure:
+        // CORRECT COLUMN INDEXES based on your sheet:
         // 0: Patient Name
         // 1: Phone Number  
         // 2: Date
@@ -1189,28 +1189,27 @@ async function fetchAppointmentsFromSheet(email, phone) {
         // 4: Status
         // 5: Match Key
         // 6: Email
-        // 7: Time
-        // 8: Reason
+        // 7: (Empty Column - skip)
+        // 8: Time          ← Time is at index 8!
+        // 9: Reason        ← Reason is at index 9!
         
         for (const row of rows) {
             const rowEmail = row[6] || '';      // Email at index 6
             const rowPhone = row[1] || '';      // Phone at index 1
             
-            // Check if this row matches the logged-in user
             if ((rowEmail && rowEmail.toLowerCase() === email.toLowerCase()) || 
                 (rowPhone && rowPhone.toString() === phone.toString())) {
                 
                 patientName = row[0] || email.split('@')[0];  // Name at index 0
                 const status = row[4] || 'Confirmed';         // Status at index 4
-                const appointmentTime = row[7] || '';         // Time at index 7
-                const appointmentReason = row[8] || 'Consultation'; // Reason at index 8
+                const appointmentTime = row[8] || '';         // Time at index 8
+                const appointmentReason = row[9] || 'Consultation'; // Reason at index 9
                 
                 console.log('Found appointment:');
                 console.log('  Time value:', appointmentTime);
                 console.log('  Reason value:', appointmentReason);
-                console.log('  Full row:', row);
+                console.log('  Status:', status);
                 
-                // Only show appointments that are NOT Cancelled or Completed
                 if (status !== 'Cancelled' && status !== 'Completed') {
                     appointments.push({
                         doctorName: row[3] || 'Dr. Githeci',  // Doctor at index 3
@@ -1237,7 +1236,6 @@ async function fetchAppointmentsFromSheet(email, phone) {
         return { success: false, message: "Error loading appointments" };
     }
 }
-
 async function patientLogin() {
     const email = document.getElementById('loginEmail').value;
     const phone = document.getElementById('loginPhone').value;
