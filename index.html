@@ -786,6 +786,83 @@
             outline: none;
             border-color: #4ecdc4;
         }
+        
+        /* Appointment Item Styles */
+        .appointment-item {
+            background: #1b2736;
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 4px solid #4ecdc4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        
+        .appointment-item:hover {
+            background: #25313f;
+            transform: translateX(5px);
+        }
+        
+        .appointment-info {
+            flex: 1;
+        }
+        
+        .appointment-info h4 {
+            color: #e7eef6;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        .appointment-info p {
+            color: #8a9db0;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .appointment-info i {
+            color: #4ecdc4;
+            width: 16px;
+        }
+        
+        .cancel-btn {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9em;
+            margin-left: 15px;
+            white-space: nowrap;
+        }
+        
+        .cancel-btn:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        /* Modal Animation */
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .modal.active .modal-content {
+            animation: modalSlideIn 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -949,104 +1026,74 @@
         </div>
         
         <!-- Modern Login Modal (Popup) -->
-        <div id="loginModal" class="modal" style="display: none;">
-            <div class="modal-content" style="background: #121823; border-radius: 24px; padding: 40px; max-width: 450px; width: 90%; border: 1px solid #25313f; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #4ecdc4, #45b7d1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-                        <i class="fas fa-user-md" style="font-size: 2.5em; color: #0b0f14;"></i>
-                    </div>
-                    <h2 style="color: #e7eef6; font-size: 1.8em;">Welcome Back</h2>
-                    <p style="color: #8a9db0;">Login to your patient dashboard</p>
-                </div>
+        <div id="loginModal" class="modal">
+            <div class="modal-content" style="background: #121823; border-radius: 24px; padding: 40px; max-width: 450px; width: 90%; border: 1px solid #25313f; box-shadow: 0 25px 50px rgba(0,0,0,0.5); position: relative; overflow: hidden;">
+                <!-- Background decoration -->
+                <div style="position: absolute; top: -50%; right: -50%; width: 300px; height: 300px; background: rgba(78, 205, 196, 0.1); border-radius: 50%; opacity: 0.5;"></div>
                 
-                <form id="loginForm" onsubmit="event.preventDefault(); patientLogin();">
-                    <div class="form-group">
-                        <label style="color: #8a9db0; margin-bottom: 8px; display: block; font-weight: 500;">
-                            <i class="fas fa-envelope"></i> Email Address
-                        </label>
-                        <input type="email" id="loginEmail" placeholder="patient@example.com" required style="width: 100%; padding: 14px 16px; background: #1b2736; border: 1px solid #25313f; border-radius: 12px; color: #e7eef6; font-size: 1em;">
+                <div style="position: relative; z-index: 1;">
+                    <!-- Close Button -->
+                    <div style="position: absolute; top: 20px; right: 20px;">
+                        <i class="fas fa-times" onclick="closeLoginModal()" style="cursor: pointer; color: #8a9db0; font-size: 1.5em; transition: all 0.3s ease;" onmouseover="this.style.color='#4ecdc4';" onmouseout="this.style.color='#8a9db0';"></i>
                     </div>
                     
-                    <div class="form-group">
-                        <label style="color: #8a9db0; margin-bottom: 8px; display: block; font-weight: 500;">
-                            <i class="fas fa-phone"></i> Phone Number
-                        </label>
-                        <input type="tel" id="loginPhone" placeholder="0712345678" required style="width: 100%; padding: 14px 16px; background: #1b2736; border: 1px solid #25313f; border-radius: 12px; color: #e7eef6; font-size: 1em;">
+                    <!-- Header -->
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #4ecdc4, #45b7d1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 30px rgba(78, 205, 196, 0.2);">
+                            <i class="fas fa-user-md" style="font-size: 2.5em; color: #0b0f14;"></i>
+                        </div>
+                        <h2 style="color: #e7eef6; font-size: 1.8em; margin-bottom: 8px; font-weight: 700;">Welcome Back</h2>
+                        <p style="color: #8a9db0; font-size: 0.95em;">Access your secure patient dashboard</p>
                     </div>
                     
-                    <button type="submit" id="loginSubmitBtn" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #4ecdc4, #45b7d1); border: none; border-radius: 12px; color: #0b0f14; font-weight: 600; font-size: 1em; cursor: pointer; margin-top: 20px;">
-                        <i class="fas fa-sign-in-alt"></i> Access Dashboard
-                    </button>
-                </form>
-                
-                <div style="text-align: center; margin-top: 20px;">
-                    <p style="color: #8a9db0; font-size: 0.85em;">Use the email and phone you used when booking</p>
-                </div>
-                
-                <div style="text-align: right; margin-top: 15px;">
-                    <i class="fas fa-times" onclick="closeLoginModal()" style="cursor: pointer; color: #8a9db0; font-size: 1.2em;"></i>
+                    <!-- Login Form -->
+                    <form id="loginForm" onsubmit="event.preventDefault(); patientLogin();">
+                        <div class="form-group">
+                            <label style="color: #8a9db0; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; font-weight: 500; font-size: 0.95em;">
+                                <i class="fas fa-envelope" style="color: #4ecdc4;"></i> Email Address
+                            </label>
+                            <input type="email" id="loginEmail" placeholder="patient@example.com" required style="width: 100%; padding: 12px 14px; background: #1b2736; border: 1px solid #25313f; border-radius: 12px; color: #e7eef6; font-size: 1em; font-family: 'Inter', sans-serif; transition: all 0.3s ease;" onfocus="this.style.borderColor='#4ecdc4'; this.style.boxShadow='0 0 0 3px rgba(78, 205, 196, 0.1)';" onblur="this.style.borderColor='#25313f'; this.style.boxShadow='none';">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label style="color: #8a9db0; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; font-weight: 500; font-size: 0.95em;">
+                                <i class="fas fa-phone" style="color: #4ecdc4;"></i> Phone Number
+                            </label>
+                            <input type="tel" id="loginPhone" placeholder="0712345678" required style="width: 100%; padding: 12px 14px; background: #1b2736; border: 1px solid #25313f; border-radius: 12px; color: #e7eef6; font-size: 1em; font-family: 'Inter', sans-serif; transition: all 0.3s ease;" onfocus="this.style.borderColor='#4ecdc4'; this.style.boxShadow='0 0 0 3px rgba(78, 205, 196, 0.1)';" onblur="this.style.borderColor='#25313f'; this.style.boxShadow='none';">
+                        </div>
+                        
+                        <button type="submit" id="loginSubmitBtn" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #4ecdc4, #45b7d1); border: none; border-radius: 12px; color: #0b0f14; font-weight: 600; font-size: 1em; cursor: pointer; margin-top: 24px; transition: all 0.3s ease; font-family: 'Inter', sans-serif;" onmouseover="this.style.boxShadow='0 10px 30px rgba(78, 205, 196, 0.3)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)';">
+                            <i class="fas fa-sign-in-alt"></i> Access Patient Portal
+                        </button>
+                    </form>
+                    
+                    <!-- Helper Text -->
+                    <div style="text-align: center; margin-top: 20px;">
+                        <p style="color: #8a9db0; font-size: 0.85em;">
+                            <i class="fas fa-lock" style="color: #4ecdc4; margin-right: 5px;"></i>
+                            Use the email and phone from your appointment booking
+                        </p>
+                    </div>
+                    
+                    <!-- Divider -->
+                    <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
+                        <div style="flex: 1; height: 1px; background: #25313f;"></div>
+                        <span style="color: #8a9db0; font-size: 0.8em;">SECURE ACCESS</span>
+                        <div style="flex: 1; height: 1px; background: #25313f;"></div>
+                    </div>
+                    
+                    <!-- Security Info -->
+                    <div style="background: rgba(78, 205, 196, 0.05); border-left: 3px solid #4ecdc4; padding: 12px; border-radius: 8px;">
+                        <p style="color: #8a9db0; font-size: 0.8em; margin: 0;">
+                            <strong>💡 Tip:</strong> Your information is encrypted and secure. First-time users should use the email and phone number from their appointment confirmation.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <!-- Dashboard (Hidden by default) -->
-        <div id="patientDashboard" style="display: none;">
-            <div style="background: linear-gradient(135deg, #1b2736, #121823); border-radius: 24px; padding: 30px; margin-bottom: 30px; border: 1px solid #25313f;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-                    <div>
-                        <h2 style="color: #e7eef6; margin-bottom: 8px;">Welcome back, <span id="patientName" style="color: #4ecdc4;"></span>! 👋</h2>
-                        <p style="color: #8a9db0;">Your health dashboard</p>
-                    </div>
-                    <button onclick="logoutPatient()" style="background: transparent; border: 1px solid #4ecdc4; color: #4ecdc4; padding: 10px 24px; border-radius: 40px; cursor: pointer;">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 40px;">
-                <div style="background: #121823; border-radius: 20px; padding: 25px; border: 1px solid #25313f;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 55px; height: 55px; background: rgba(78, 205, 196, 0.1); border-radius: 15px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-calendar-check" style="font-size: 1.5em; color: #4ecdc4;"></i>
-                        </div>
-                        <div>
-                            <div class="stat-value" id="upcomingCount" style="font-size: 2.2em; font-weight: 700; color: #4ecdc4;">0</div>
-                            <div class="stat-label" style="color: #8a9db0;">Upcoming</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="background: #121823; border-radius: 20px; padding: 25px; border: 1px solid #25313f;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 55px; height: 55px; background: rgba(78, 205, 196, 0.1); border-radius: 15px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-history" style="font-size: 1.5em; color: #4ecdc4;"></i>
-                        </div>
-                        <div>
-                            <div class="stat-value" id="pastCount" style="font-size: 2.2em; font-weight: 700; color: #4ecdc4;">0</div>
-                            <div class="stat-label" style="color: #8a9db0;">Past Visits</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <h3 style="color: #e7eef6; margin-bottom: 20px;">
-                <i class="fas fa-calendar-alt" style="color: #4ecdc4; margin-right: 10px;"></i>
-                Your Upcoming Appointments
-            </h3>
-            <div id="upcomingAppointments" style="display: flex; flex-direction: column; gap: 15px;"></div>
-            
-            <div style="margin-top: 40px; padding: 25px; background: #121823; border-radius: 20px; border: 1px solid #25313f;">
-                <h4 style="color: #e7eef6; margin-bottom: 15px;">Need Assistance?</h4>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button onclick="window.openChat()" style="background: #4ecdc4; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; font-weight: 600;">
-                        <i class="fas fa-comment-medical"></i> Chat with AI
-                    </button>
-                    <button onclick="window.location.href='tel:+254798879868'" style="background: transparent; border: 1px solid #4ecdc4; color: #4ecdc4; padding: 10px 20px; border-radius: 40px; cursor: pointer;">
-                        <i class="fas fa-phone"></i> Call Clinic
-                    </button>
-                </div>
-            </div>
-        </div>
+        <!-- Patient Portal has been moved to separate patient-portal.html -->
+        <!-- After successful login, users will be redirected to the dedicated portal page -->
     </section>
     
     <!-- Testimonials -->
@@ -1254,19 +1301,13 @@ async function patientLogin() {
         const data = await fetchAppointmentsFromSheet(email, phone);
         
         if (data.success) {
-            currentPatient = {
-                name: data.patientName,
-                email: email,
-                phone: phone
-            };
+            // Store credentials in localStorage for persistence
+            localStorage.setItem('patientEmail', email);
+            localStorage.setItem('patientPhone', phone);
             
+            // Redirect to patient portal
             closeLoginModal();
-            document.getElementById('loginButtonContainer').style.display = 'none';
-            document.getElementById('patientDashboard').style.display = 'block';
-            document.getElementById('patientName').textContent = data.patientName;
-            document.getElementById('upcomingCount').textContent = data.upcomingCount;
-            document.getElementById('pastCount').textContent = data.pastCount;
-            displayAppointments(data.upcomingAppointments);
+            window.location.href = `patient-portal.html?email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`;
         } else {
             alert(data.message || 'No appointments found. Please check your details.');
         }
@@ -1279,43 +1320,7 @@ async function patientLogin() {
     }
 }
 
-function displayAppointments(appointments) {
-    const container = document.getElementById('upcomingAppointments');
-    if (!appointments || appointments.length === 0) {
-        container.innerHTML = '<div style="text-align: center; padding: 40px; color: #8a9db0;">No upcoming appointments</div>';
-        return;
-    }
-    container.innerHTML = appointments.map(app => `
-        <div class="appointment-item">
-            <div class="appointment-info">
-                <h4>${app.doctorName}</h4>
-                <p><i class="fas fa-calendar"></i> ${app.date} at ${app.time}</p>
-                <p><i class="fas fa-stethoscope"></i> Reason: ${app.reason}</p>
-                <p><i class="fas fa-check-circle"></i> Status: ${app.status}</p>
-            </div>
-            <button class="cancel-btn" onclick="cancelAppointment('${app.doctorName}', '${app.date}', '${app.time}')">Cancel</button>
-        </div>
-    `).join('');
-}
-
-async function cancelAppointment(doctorName, date, time) {
-    if (!confirm(`Cancel appointment with ${doctorName} on ${date}?`)) return;
-    try {
-        const response = await fetch('https://ybg-n8n-automations.onrender.com/webhook/cancel-appointment', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ patientName: currentPatient.name, email: currentPatient.email, doctorName: doctorName, appointmentDate: date, appointmentTime: time })
-        });
-        if (response.ok) { alert('Appointment cancelled successfully.'); patientLogin(); }
-        else { alert('Failed to cancel. Please try again.'); }
-    } catch (error) { console.error('Cancel error:', error); alert('Failed to cancel. Please try again.'); }
-}
-
-function logoutPatient() {
-    currentPatient = null;
-    document.getElementById('patientDashboard').style.display = 'none';
-    document.getElementById('loginButtonContainer').style.display = 'block';
-    document.getElementById('loginEmail').value = '';
-    document.getElementById('loginPhone').value = '';
-}  </script>
+// Appointment management functions have been moved to patient-portal.html
+// for better code organization and separation of concerns  </script>
 </body>
 </html>

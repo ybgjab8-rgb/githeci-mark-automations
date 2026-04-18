@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Portal - MarkG Automations</title>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0f14;
+            color: #e7eef6;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #121823;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #4ecdc4;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #45b7d1;
+        }
+        
+        /* Header Navigation */
+        .portal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background: rgba(11, 15, 20, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #25313f;
+        }
+        
+        .portal-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .portal-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .portal-logo h2 {
+            font-size: 1.2em;
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .portal-user {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-name {
+            color: #e7eef6;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        .user-status {
+            color: #8a9db0;
+            font-size: 0.8em;
+        }
+        
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #4ecdc4;
+            color: #4ecdc4;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        
+        .logout-btn:hover {
+            background: #4ecdc4;
+            color: #0b0f14;
+        }
+        
+        /* Main Container */
+        .portal-container {
+            margin-top: 80px;
+            padding: 40px 5%;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, #1b2736, #121823);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid #25313f;
+        }
+        
+        .welcome-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .welcome-text h1 {
+            color: #e7eef6;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .welcome-text h1 span {
+            color: #4ecdc4;
+        }
+        
+        .welcome-text p {
+            color: #8a9db0;
+            font-size: 1em;
+        }
+        
+        .welcome-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
+        }
+        
+        .action-btn-primary {
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            color: #0b0f14;
+        }
+        
+        .action-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.3);
+        }
+        
+        .action-btn-secondary {
+            background: transparent;
+            border: 1px solid #4ecdc4;
+            color: #4ecdc4;
+        }
+        
+        .action-btn-secondary:hover {
+            background: #4ecdc4;
+            color: #0b0f14;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: #121823;
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid #25313f;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: #4ecdc4;
+            transform: translateY(-5px);
+        }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: #4ecdc4;
+        }
+        
+        .stat-info h3 {
+            font-size: 2em;
+            font-weight: 700;
+            color: #4ecdc4;
+            margin-bottom: 5px;
+        }
+        
+        .stat-info p {
+            color: #8a9db0;
+            font-size: 0.9em;
+        }
+        
+        /* Content Sections */
+        .portal-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            color: #e7eef6;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title i {
+            color: #4ecdc4;
+        }
+        
+        /* Appointments Section */
+        .appointments-container {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .appointment-item {
+            background: #1b2736;
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 4px solid #4ecdc4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .appointment-item:hover {
+            background: #25313f;
+            transform: translateX(5px);
+        }
+        
+        .appointment-info {
+            flex: 1;
+        }
+        
+        .appointment-info h4 {
+            color: #e7eef6;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .appointment-info p {
+            color: #8a9db0;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .appointment-info i {
+            color: #4ecdc4;
+            width: 16px;
+        }
+        
+        .appointment-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .status-confirmed {
+            background: rgba(78, 205, 196, 0.1);
+            color: #4ecdc4;
+        }
+        
+        .status-pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+        
+        .appointment-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: 20px;
+        }
+        
+        .cancel-btn {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+        
+        .cancel-btn:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .reschedule-btn {
+            background: rgba(78, 205, 196, 0.1);
+            color: #4ecdc4;
+            border: 1px solid #4ecdc4;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+        
+        .reschedule-btn:hover {
+            background: #4ecdc4;
+            color: #0b0f14;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: #121823;
+            border-radius: 16px;
+            border: 2px dashed #25313f;
+        }
+        
+        .empty-state i {
+            font-size: 3em;
+            color: #4ecdc4;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            color: #e7eef6;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            color: #8a9db0;
+            margin-bottom: 20px;
+        }
+        
+        /* Help Section */
+        .help-section {
+            background: #121823;
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid #25313f;
+        }
+        
+        .help-section h3 {
+            color: #e7eef6;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .help-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .help-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid #25313f;
+            background: transparent;
+            color: #e7eef6;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+        
+        .help-btn:hover {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+        }
+        
+        .help-btn i {
+            color: #4ecdc4;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .portal-header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 5%;
+            }
+            
+            .portal-container {
+                margin-top: 140px;
+                padding: 20px 5%;
+            }
+            
+            .welcome-header {
+                flex-direction: column;
+            }
+            
+            .appointment-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .appointment-actions {
+                margin-left: 0;
+                margin-top: 15px;
+                width: 100%;
+            }
+            
+            .section-title {
+                font-size: 1.3em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Portal Header -->
+    <header class="portal-header">
+        <div class="portal-logo">
+            <div class="portal-logo-icon">
+                <i class="fas fa-clinic-medical"></i>
+            </div>
+            <h2>Patient Portal</h2>
+        </div>
+        <div class="portal-user">
+            <div class="user-info">
+                <div class="user-name" id="portalPatientName">Loading...</div>
+                <div class="user-status">Active Patient</div>
+            </div>
+            <button class="logout-btn" onclick="logoutPatient()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </header>
+    
+    <!-- Main Container -->
+    <div class="portal-container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <div class="welcome-header">
+                <div class="welcome-text">
+                    <h1>Welcome back, <span id="welcomePatientName">Patient</span>! 👋</h1>
+                    <p>Manage your appointments and health information</p>
+                </div>
+                <div class="welcome-actions">
+                    <button class="action-btn action-btn-primary" onclick="bookNewAppointment()">
+                        <i class="fas fa-plus"></i> Book Appointment
+                    </button>
+                    <button class="action-btn action-btn-secondary" onclick="openChat()">
+                        <i class="fas fa-comment-dots"></i> Chat Support
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="upcomingCount">0</h3>
+                        <p>Upcoming Appointments</p>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pastCount">0</h3>
+                        <p>Past Visits</p>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="doctorCount">0</h3>
+                        <p>Care Providers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Appointments Section -->
+        <div class="portal-section">
+            <h2 class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                Your Upcoming Appointments
+            </h2>
+            <div id="upcomingAppointments" class="appointments-container">
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>No Upcoming Appointments</h3>
+                    <p>You don't have any scheduled appointments at the moment.</p>
+                    <button class="action-btn action-btn-primary" onclick="bookNewAppointment()">
+                        <i class="fas fa-plus"></i> Book Now
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Help Section -->
+        <div class="portal-section">
+            <div class="help-section">
+                <h3 id="helpTitle">
+                    <i class="fas fa-headset"></i>
+                    Need Assistance? We're Here to Help
+                </h3>
+                <div class="help-buttons">
+                    <button class="help-btn" onclick="openChat()">
+                        <i class="fas fa-comments"></i> Chat with AI Assistant
+                    </button>
+                    <button class="help-btn" onclick="callClinic()">
+                        <i class="fas fa-phone"></i> Call Clinic
+                    </button>
+                    <button class="help-btn" onclick="sendEmail()">
+                        <i class="fas fa-envelope"></i> Send Email
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration
+        const SHEET_ID = '1FcDVXIz7Q5PmNhnSshmt8n4Z3k6P2fX0Puhmmh6y5dk';
+        const API_KEY = 'AIzaSyDGMuppJQrS0DUl4XqMrR3e-nrWwdZVF5E';
+        const CLINIC_PHONE = '+254798879868';
+        const CLINIC_EMAIL = 'info@markgautomations.co.ke';
+        
+        let currentPatient = null;
+        
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            const params = new URLSearchParams(window.location.search);
+            const email = params.get('email');
+            const phone = params.get('phone');
+            
+            if (email && phone) {
+                loadPatientData(email, phone);
+            } else {
+                redirectToLogin();
+            }
+        });
+        
+        // Redirect to login if parameters not found
+        function redirectToLogin() {
+            window.location.href = 'index.html';
+        }
+        
+        // Load patient data from sheet
+        async function loadPatientData(email, phone) {
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (!data.values || data.values.length === 0) {
+                    alert('No data found. Redirecting...');
+                    redirectToLogin();
+                    return;
+                }
+                
+                const rows = data.values.slice(1);
+                let patientName = '';
+                const appointments = [];
+                const doctors = new Set();
+                
+                // Match patient by email or phone
+                for (const row of rows) {
+                    const rowEmail = row[6] || '';
+                    const rowPhone = row[1] || '';
+                    
+                    if ((rowEmail && rowEmail.toLowerCase() === email.toLowerCase()) || 
+                        (rowPhone && rowPhone.toString() === phone.toString())) {
+                        
+                        patientName = row[0] || email.split('@')[0];
+                        const status = row[4] || 'Confirmed';
+                        
+                        doctors.add(row[3] || 'Dr. Githeci');
+                        
+                        if (status !== 'Cancelled' && status !== 'Completed') {
+                            appointments.push({
+                                doctorName: row[3] || 'Dr. Githeci',
+                                date: row[2] || 'Date not set',
+                                time: row[8] || 'Time not set',
+                                reason: row[9] || 'Consultation',
+                                status: status
+                            });
+                        }
+                    }
+                }
+                
+                if (patientName) {
+                    currentPatient = { name: patientName, email, phone };
+                    updatePortal(patientName, appointments, doctors.size);
+                } else {
+                    alert('Patient not found. Redirecting...');
+                    redirectToLogin();
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+                alert('Error loading portal. Redirecting...');
+                redirectToLogin();
+            }
+        }
+        
+        // Update portal display
+        function updatePortal(patientName, appointments, doctorCount) {
+            document.getElementById('portalPatientName').textContent = patientName;
+            document.getElementById('welcomePatientName').textContent = patientName;
+            document.getElementById('upcomingCount').textContent = appointments.length;
+            document.getElementById('pastCount').textContent = '0';
+            document.getElementById('doctorCount').textContent = doctorCount;
+            
+            displayAppointments(appointments);
+        }
+        
+        // Display appointments
+        function displayAppointments(appointments) {
+            const container = document.getElementById('upcomingAppointments');
+            
+            if (!appointments || appointments.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-times"></i>
+                        <h3>No Upcoming Appointments</h3>
+                        <p>You don't have any scheduled appointments at the moment.</p>
+                        <button class="action-btn action-btn-primary" onclick="bookNewAppointment()">
+                            <i class="fas fa-plus"></i> Book Now
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = appointments.map(app => `
+                <div class="appointment-item">
+                    <div class="appointment-info">
+                        <h4>
+                            <i class="fas fa-user-md"></i>
+                            ${app.doctorName}
+                        </h4>
+                        <p>
+                            <i class="fas fa-calendar"></i>
+                            ${app.date} at ${app.time}
+                        </p>
+                        <p>
+                            <i class="fas fa-stethoscope"></i>
+                            Reason: ${app.reason}
+                        </p>
+                        <span class="appointment-status ${app.status === 'Confirmed' ? 'status-confirmed' : 'status-pending'}">
+                            <i class="fas fa-check-circle"></i> ${app.status}
+                        </span>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="reschedule-btn" onclick="rescheduleAppointment('${app.doctorName}', '${app.date}')">
+                            <i class="fas fa-edit"></i> Reschedule
+                        </button>
+                        <button class="cancel-btn" onclick="cancelAppointment('${app.doctorName}', '${app.date}')">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Appointment actions
+        function bookNewAppointment() {
+            if (window.openChat) {
+                window.openChat();
+            } else {
+                alert('Please chat with our AI assistant to book an appointment.');
+            }
+        }
+        
+        function rescheduleAppointment(doctor, date) {
+            alert(`Reschedule feature coming soon for ${doctor}`);
+        }
+        
+        async function cancelAppointment(doctor, date) {
+            if (!confirm(`Cancel appointment with ${doctor} on ${date}?`)) return;
+            try {
+                const response = await fetch('https://ybg-n8n-automations.onrender.com/webhook/cancel-appointment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        patientName: currentPatient.name,
+                        email: currentPatient.email,
+                        doctorName: doctor,
+                        appointmentDate: date
+                    })
+                });
+                if (response.ok) {
+                    alert('Appointment cancelled successfully.');
+                    location.reload();
+                } else {
+                    alert('Failed to cancel appointment.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error cancelling appointment.');
+            }
+        }
+        
+        // Support actions
+        function openChat() {
+            alert('Chat widget would open here');
+        }
+        
+        function callClinic() {
+            window.location.href = `tel:${CLINIC_PHONE}`;
+        }
+        
+        function sendEmail() {
+            window.location.href = `mailto:${CLINIC_EMAIL}?subject=Patient Portal Inquiry&body=Hello, I need assistance with...`;
+        }
+        
+        function logoutPatient() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('patientEmail');
+                localStorage.removeItem('patientPhone');
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>
