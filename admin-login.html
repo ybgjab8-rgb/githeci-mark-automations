@@ -4,366 +4,236 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - MarkG Automations</title>
-
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #0b0f14 0%, #121823 100%);
-            color: #e7eef6;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow-x: hidden;
         }
-
-        .login-container {
-            background: rgba(11, 15, 20, 0.95);
-            border-radius: 20px;
+        .login-card {
+            background: #121823;
+            border-radius: 24px;
             padding: 40px;
-            width: 100%;
-            max-width: 400px;
             border: 1px solid #25313f;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
+            width: 400px;
         }
-
-        .login-header {
+        .logo {
             text-align: center;
             margin-bottom: 30px;
         }
-
-        .login-header .logo {
-            width: 80px;
-            height: 80px;
+        .logo-icon {
+            width: 70px;
+            height: 70px;
             background: linear-gradient(135deg, #4ecdc4, #45b7d1);
-            border-radius: 20px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
-            font-size: 2.5em;
-            color: #0b0f14;
-            box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
         }
-
-        .login-header h1 {
-            font-size: 1.8em;
-            margin-bottom: 10px;
+        .logo-icon i {
+            font-size: 2em;
+            color: #0b0f14;
+        }
+        .logo h2 {
+            font-size: 1.5em;
+            font-weight: 700;
             background: linear-gradient(45deg, #fff, #4ecdc4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 700;
         }
-
-        .login-header p {
-            color: #8a9db0;
-            font-size: 0.9em;
-        }
-
         .form-group {
             margin-bottom: 20px;
         }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
+        .form-group label {
             color: #8a9db0;
+            margin-bottom: 8px;
+            display: block;
             font-weight: 500;
-            font-size: 0.9em;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
-
-        .form-label i {
-            color: #4ecdc4;
-        }
-
-        .form-input {
+        .form-group input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 12px 14px;
             background: #1b2736;
             border: 1px solid #25313f;
-            border-radius: 10px;
+            border-radius: 12px;
             color: #e7eef6;
-            font-family: 'Inter', sans-serif;
             font-size: 1em;
-            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
         }
-
-        .form-input:focus {
+        .form-group input:focus {
             outline: none;
             border-color: #4ecdc4;
-            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
         }
-
-        .form-input::placeholder {
-            color: #64748b;
-        }
-
         .login-btn {
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #4ecdc4, #45b7d1);
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             color: #0b0f14;
             font-weight: 600;
             font-size: 1em;
             cursor: pointer;
             margin-top: 10px;
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
-
-        .login-btn:hover:not(:disabled) {
+        .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.3);
+            box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
         }
-
-        .login-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
         }
-
-        .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid #ef4444;
-            color: #fca5a5;
+        .back-link a {
+            color: #8a9db0;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        .back-link a:hover {
+            color: #4ecdc4;
+        }
+        .alert {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 0.9em;
             display: none;
-            align-items: center;
-            gap: 8px;
         }
-
-        .error-message.show {
-            display: flex;
-        }
-
-        .back-link {
-            text-align: center;
-            margin-top: 25px;
-        }
-
-        .back-link a {
-            color: #4ecdc4;
-            text-decoration: none;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .back-link a:hover {
-            color: #45b7d1;
-        }
-
-        .demo-info {
-            background: rgba(78, 205, 196, 0.05);
-            border-left: 3px solid #4ecdc4;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 0.85em;
-            text-align: left;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #25313f;
-        }
-
-        .demo-info p {
-            color: #8a9db0;
-            margin-bottom: 8px;
-        }
-
-        .demo-info strong {
-            color: #4ecdc4;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(78, 205, 196, 0.3);
-            border-radius: 50%;
-            border-top-color: #4ecdc4;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @media (max-width: 480px) {
-            .login-container {
-                margin: 20px;
-                padding: 30px 20px;
-            }
-
-            .login-header h1 {
-                font-size: 1.5em;
-            }
+        .alert.show {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <div class="logo">
-                <i class="fas fa-lock"></i>
+    <div class="login-card">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-cog"></i>
             </div>
-            <h1>Admin Portal</h1>
-            <p>Clinic Management Dashboard</p>
+            <h2>Clinic Admin Portal</h2>
         </div>
-
-        <div id="errorMessage" class="error-message">
-            <i class="fas fa-exclamation-circle"></i>
-            <span id="errorText"></span>
-        </div>
-
-        <form id="adminLoginForm" onsubmit="adminLogin(event)">
+        
+        <div id="alert" class="alert"></div>
+        
+        <form id="adminLoginForm" onsubmit="event.preventDefault(); adminLogin();">
             <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-building"></i>
-                    Clinic ID
-                </label>
-                <input 
-                    type="text" 
-                    class="form-input" 
-                    id="clinicId" 
-                    placeholder="e.g., CLINIC001" 
-                    required
-                >
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Enter your username" required>
             </div>
-
+            
             <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-key"></i>
-                    Admin Password
-                </label>
-                <input 
-                    type="password" 
-                    class="form-input" 
-                    id="adminPassword" 
-                    placeholder="Enter your password" 
-                    required
-                >
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
             </div>
-
+            
             <button type="submit" class="login-btn" id="loginBtn">
-                <i class="fas fa-sign-in-alt"></i>
-                <span>Access Dashboard</span>
+                Login to Admin Portal
             </button>
         </form>
-
+        
         <div class="back-link">
-            <a href="index.html">
-                <i class="fas fa-arrow-left"></i> Back to Main Site
-            </a>
-        </div>
-
-        <div class="demo-info">
-            <p><strong>Demo Credentials:</strong></p>
-            <div><strong>Clinic ID:</strong> CLINIC001</div>
-            <div><strong>Password:</strong> admin123</div>
+            <a href="index.html">← Back to Patient Portal</a>
         </div>
     </div>
 
     <script>
-        // Demo credentials for testing
-        const VALID_CLINICS = {
-            'CLINIC001': 'admin123',
-            'CLINIC002': 'admin123'
-        };
+        // Same Google Sheets config as your patient portal
+        const SHEET_ID = '1FcDVXIz7Q5PmNhnSshmt8n4Z3k6P2fX0Puhmmh6y5dk';
+        const API_KEY = 'AIzaSyDGMuppJQrS0DUl4XqMrR3e-nrWwdZVF5E';
+        const ADMIN_SHEET = 'ADMINS';  // Your sheet name - must match exactly!
 
-        async function adminLogin(event) {
-            event.preventDefault();
-
-            const clinicId = document.getElementById('clinicId').value.trim();
-            const password = document.getElementById('adminPassword').value;
+        async function adminLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
             const loginBtn = document.getElementById('loginBtn');
-            const errorMsg = document.getElementById('errorMessage');
-
-            errorMsg.classList.remove('show');
-
-            if (!clinicId || !password) {
-                showError('Please enter both clinic ID and password');
+            const alertDiv = document.getElementById('alert');
+            
+            if (!username || !password) {
+                showAlert('Please enter both username and password', 'error');
                 return;
             }
-
+            
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
             loginBtn.disabled = true;
-            loginBtn.innerHTML = '<span class="spinner"></span> Authenticating...';
-
+            
             try {
-                await new Promise(resolve => setTimeout(resolve, 800));
-
-                if (VALID_CLINICS[clinicId] && VALID_CLINICS[clinicId] === password) {
-                    const token = btoa(`${clinicId}:${Date.now()}`);
-                    localStorage.setItem('adminToken', token);
-                    localStorage.setItem('clinicId', clinicId);
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${ADMIN_SHEET}?key=${API_KEY}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (!data.values || data.values.length === 0) {
+                    showAlert('Admin sheet not found. Please contact support.', 'error');
+                    return;
+                }
+                
+                const rows = data.values.slice(1);
+                let isValid = false;
+                let adminRole = '';
+                
+                for (const row of rows) {
+                    const storedUsername = row[0] || '';
+                    const storedPassword = row[1] || '';
+                    const role = row[2] || 'Admin';
+                    
+                    if (storedUsername === username && storedPassword === password) {
+                        isValid = true;
+                        adminRole = role;
+                        break;
+                    }
+                }
+                
+                if (isValid) {
+                    localStorage.setItem('adminLoggedIn', 'true');
+                    localStorage.setItem('adminUsername', username);
+                    localStorage.setItem('adminRole', adminRole);
+                    
+                    showAlert('Login successful! Redirecting...', 'success');
                     
                     setTimeout(() => {
-                        window.location.href = 'admin-portal.html';
-                    }, 500);
+                        window.location.href = 'admin-dashboard.html';
+                    }, 1000);
                 } else {
-                    throw new Error('Invalid clinic ID or password');
+                    showAlert('Invalid username or password', 'error');
                 }
-
+                
             } catch (error) {
-                showError(error.message);
+                console.error('Login error:', error);
+                showAlert('Unable to connect. Please try again.', 'error');
             } finally {
+                loginBtn.innerHTML = 'Login to Admin Portal';
                 loginBtn.disabled = false;
-                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span>Access Dashboard</span>';
             }
         }
-
-        function showError(message) {
-            const errorMsg = document.getElementById('errorMessage');
-            const errorText = document.getElementById('errorText');
-            errorText.textContent = message;
-            errorMsg.classList.add('show');
+        
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alert');
+            alertDiv.textContent = message;
+            alertDiv.style.background = type === 'error' ? 'rgba(255, 107, 107, 0.1)' : 'rgba(78, 205, 196, 0.1)';
+            alertDiv.style.borderColor = type === 'error' ? '#ff6b6b' : '#4ecdc4';
+            alertDiv.style.color = type === 'error' ? '#ff6b6b' : '#4ecdc4';
+            alertDiv.classList.add('show');
+            
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+            }, 3000);
         }
-
-        function checkExistingLogin() {
-            const token = localStorage.getItem('adminToken');
-            const clinicId = localStorage.getItem('clinicId');
-
-            if (token && clinicId) {
-                window.location.href = 'admin-portal.html';
-            }
+        
+        if (localStorage.getItem('adminLoggedIn') === 'true') {
+            window.location.href = 'admin-dashboard.html';
         }
-
-        document.addEventListener('DOMContentLoaded', checkExistingLogin);
-
-        document.getElementById('clinicId').addEventListener('focus', () => {
-            document.getElementById('errorMessage').classList.remove('show');
-        });
-
-        document.getElementById('adminPassword').addEventListener('focus', () => {
-            document.getElementById('errorMessage').classList.remove('show');
-        });
     </script>
 </body>
 </html>
